@@ -1,12 +1,18 @@
 mod interpreter;
-mod instructions;
-use instructions::Instruction as Instruction;
+mod parser;
+
+
+use interpreter::*;
+use parser::*;
+
+
+use std::env;
+use std::fs;
 
 fn main() {
-    let prog:Vec<Instruction>=vec![
-        Instruction::Push(34),
-        Instruction::Push(35),
-        Instruction::Add,
-        Instruction::Dump];
-    interpreter::interpret(prog);
+    let args : Vec<String> = env::args().collect();
+    let file_name = &args[1];
+    let contents = fs::read_to_string(file_name).expect("Unable to open file");
+    let prog=parse(contents);
+    interpret(prog);
 }

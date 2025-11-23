@@ -1,4 +1,4 @@
-use crate::instructions::*;
+use crate::parser::*;
 pub fn interpret(program: Vec<Instruction>)
 {
     let mut stack : Vec<i64> = Vec::new();
@@ -6,8 +6,7 @@ pub fn interpret(program: Vec<Instruction>)
     {
         match instruction
         {
-            Instruction::Push(val) => {stack.push(val);},
-            Instruction::Pop => {stack.pop();},
+            Instruction::Push(val) => stack.push(val),
             Instruction::Add => {
                 assert!(stack.len() > 1);
                 let a=stack.pop().unwrap();
