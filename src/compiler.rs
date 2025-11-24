@@ -1,11 +1,12 @@
-use std::io::Write;
+use crate::parser::*;
 
 
 #[macro_export]
 macro_rules! write_to_file {
-    ($file:expr, $contents:expr) => {
+    ($file:expr, $contents:expr) => {{
+        use std::io::Write;
         let _ = $file.write_all($contents.as_bytes());
-    };
+    }};
 }
 
 
@@ -34,7 +35,6 @@ macro_rules! run_command {
     }};
 }
 
-use crate::parser::*;
 
 
 pub fn compile(program: Vec<Instruction>)
@@ -49,7 +49,7 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    mov     BYTE  [rsp], 10\n");
     write_to_file!(file,"    mov     rsi, rsp\n");
     write_to_file!(file,".L2:\n");
-    write_to_file!(file,"    mov rax,rdi\n");
+    write_to_file!(file,"    mov     rax,rdi\n");
     write_to_file!(file,"    mov     edx, edi\n");
     write_to_file!(file,"    imul    rax, rax, 1717986919\n");
     write_to_file!(file,"    sar     edx, 31\n");
@@ -80,7 +80,7 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    mov     BYTE  [rcx+1], dil\n");
     write_to_file!(file,"    cmp     rax, r9\n");
     write_to_file!(file,"    jne     .L3\n");
-    write_to_file!(file,"    mov rdx, rdx\n");
+    write_to_file!(file,"    mov     rdx, rdx\n");
     write_to_file!(file,"    mov     edi, 1\n");
     write_to_file!(file,"    mov     rax,1\n");
     write_to_file!(file,"    syscall\n");
@@ -94,9 +94,30 @@ pub fn compile(program: Vec<Instruction>)
             Instruction::Push(val) => {write_to_file!(file,format!("    push {}\n",val));}
             Instruction::Add =>
             {
-                write_to_file!(file,"    pop rbx\n");
                 write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");
                 write_to_file!(file,"    add rax,rbx\n");
+                write_to_file!(file,"    push rax\n");
+            }
+            Instruction::Sub =>
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    sub rax,rbx\n");
+                write_to_file!(file,"    push rax\n");
+            }
+            Instruction::Mult =>
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    imul rax,rbx\n");
+                write_to_file!(file,"    push rax\n");
+            }
+            Instruction::Div =>
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    div rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
             Instruction::Dump => 
@@ -104,7 +125,6 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    pop rdi\n");
                 write_to_file!(file,"    call print\n");
             }
-            _ => {}
         }
     }
     write_to_file!(file,"    xor rax,rax\n");

@@ -11,36 +11,45 @@ pub enum Instruction
 }
 
 
-pub fn parse(contents:String) -> Vec<Instruction>
+
+pub fn parse_line(line: &str,instructions: &mut Vec<Instruction>)
 {
-    let mut instructions: Vec<Instruction> = vec![];
-    let parts = contents.split(' ');
-    for part in parts{
-        if part=="+" 
+    let parts = line.split_whitespace();
+    for word in parts{
+        if word=="+" 
         {
             instructions.push(Instruction::Add);
         }
-        else if part=="-"
+        else if word=="-"
         {
             instructions.push(Instruction::Sub);
         }
-        else if part == "*"
+        else if word == "*"
         {
             instructions.push(Instruction::Mult);
         }
-        else if part == "/"
+        else if word == "/"
         {
             instructions.push(Instruction::Div);
         }
-        else if part == "."
+        else if word == "."
         {
             instructions.push(Instruction::Dump);
         }
         else 
         {
-            let val: i64 = str::from_utf8(part.as_bytes()).expect("").parse().expect("");
+            let val: i64 = str::from_utf8(word.as_bytes()).expect("").parse().expect("");
             instructions.push(Instruction::Push(val));
         }
+    }
+}
+
+pub fn parse(contents:String) -> Vec<Instruction>
+{
+    let mut instructions: Vec<Instruction> = vec![];
+    let lines = contents.lines();
+    for line in lines{
+        parse_line(line,&mut instructions);
     }
     instructions
 }
