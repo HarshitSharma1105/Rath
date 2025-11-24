@@ -14,24 +14,30 @@ pub enum Instruction
 pub fn parse(contents:String) -> Vec<Instruction>
 {
     let mut instructions: Vec<Instruction> = vec![];
-    let parts = contents.split_whitespace();
+    let parts = contents.split(' ');
     for part in parts{
-        if part=="+" {
+        if part=="+" 
+        {
             instructions.push(Instruction::Add);
         }
-        else if part=="-"{
+        else if part=="-"
+        {
             instructions.push(Instruction::Sub);
         }
-        else if part == "*"{
+        else if part == "*"
+        {
             instructions.push(Instruction::Mult);
         }
-        else if part == "/"{
+        else if part == "/"
+        {
             instructions.push(Instruction::Div);
         }
-        else if part == "."{
+        else if part == "."
+        {
             instructions.push(Instruction::Dump);
         }
-        else {
+        else 
+        {
             let val: i64 = str::from_utf8(part.as_bytes()).expect("").parse().expect("");
             instructions.push(Instruction::Push(val));
         }
