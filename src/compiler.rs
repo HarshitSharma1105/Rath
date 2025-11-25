@@ -87,6 +87,7 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    add     rsp, 264\n");
     write_to_file!(file,"    ret\n");
     write_to_file!(file,"main:\n");
+    write_to_file!(file,"    mov rbp,rsp\n");
     for instruction in program
     {
         match instruction
@@ -122,11 +123,12 @@ pub fn compile(program: Vec<Instruction>)
             }
             Instruction::Dump => 
             {
-                write_to_file!(file,"    pop rdi\n");
+                write_to_file!(file,"    mov rdi,[rsp]\n");
                 write_to_file!(file,"    call print\n");
             }
         }
     }
+    write_to_file!(file,"    mov rsp,rbp\n");
     write_to_file!(file,"    xor rax,rax\n");
     write_to_file!(file,"    ret\n");
     run_command!("fasm output.asm");
