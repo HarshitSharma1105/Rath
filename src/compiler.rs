@@ -68,7 +68,7 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    mov     r9d, edx\n");
     write_to_file!(file,"    lea     ecx, [rdx-1]\n");
     write_to_file!(file,"    mov     rax, rsi\n");
-    write_to_file!(file,"    sar     r9d,1\n");
+    write_to_file!(file,"    sar     r9d, 1\n");
     write_to_file!(file,"    add     rcx, rsi\n");
     write_to_file!(file,"    add     r9, rsi\n");
     write_to_file!(file,".L3:\n");
@@ -82,7 +82,7 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    jne     .L3\n");
     write_to_file!(file,"    mov     rdx, rdx\n");
     write_to_file!(file,"    mov     edi, 1\n");
-    write_to_file!(file,"    mov     rax,1\n");
+    write_to_file!(file,"    mov     rax, 1\n");
     write_to_file!(file,"    syscall\n");
     write_to_file!(file,"    add     rsp, 264\n");
     write_to_file!(file,"    ret\n");
@@ -118,6 +118,7 @@ pub fn compile(program: Vec<Instruction>)
             {
                 write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    xor rdx,rdx\n");
                 write_to_file!(file,"    div rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
@@ -134,5 +135,5 @@ pub fn compile(program: Vec<Instruction>)
     run_command!("fasm output.asm");
     run_command!("cc output.o -o output");
     run_command!("./output");
-    run_command!("rm output.o output.asm")
+    run_command!("rm output.o output.asm");
 }

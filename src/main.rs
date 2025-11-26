@@ -6,22 +6,20 @@ use interpreter::*;
 use parser::*;
 use compiler::*;
 
-use std::env;
-use std::process;
-
 fn print_usage()
 {
+    use std::process::exit;
     print!("Expected arguments <compile/interpret> <file name>\n");
+    exit(1);
 }
 
 
 
 fn main() {
-    let args : Vec<String> = env::args().collect();
+    let args : Vec<String> = std::env::args().collect();
     if args.len() < 3
     {
         print_usage();
-        process::exit(1);
     }
     let mode = &args[1];
     let file_name = &args[2];
@@ -38,6 +36,5 @@ fn main() {
     else 
     {
         print_usage();
-        process::exit(1);
     }
 }
