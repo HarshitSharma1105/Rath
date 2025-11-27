@@ -1,4 +1,42 @@
 
+#[macro_export]
+macro_rules! write_to_file {
+    ($file:expr, $contents:expr) => {{
+        use std::io::Write;
+        let _ = $file.write_all($contents.as_bytes());
+    }};
+}
+
+
+#[macro_export]
+macro_rules! create_file{
+    ($name:expr) => {{
+        use std::fs::File;
+        File::create($name).expect("Failed to create file")
+    }};
+}
+
+
+#[macro_export]
+macro_rules! read_file {
+    ($path:expr) => {{
+        use std::fs;
+        fs::read_to_string($path).expect("Unable to open file")
+    }};
+}
+
+#[macro_export]
+macro_rules! run_command {
+    ($command:expr) => {{
+        use std::process::Command;
+        let _ = Command::new("sh").arg("-c").arg($command).status().unwrap();
+    }};
+}
+
+
+
+
+
 #[derive(Debug)]
 pub enum Instruction
 {
@@ -11,14 +49,14 @@ pub enum Instruction
 }
 
 
-pub fn parse(contents:String) -> Vec<Instruction>
+pub fn parse(file_name: &String) -> Vec<Instruction>
 {
-    let mut instructions: Vec<Instruction> = vec![];
+    let mut instructions: Vec<Instruction> = Vec::default();
     let mut idx = 0;
     let mut line_num = 1;
     let mut line_start = 0;
     let mut buff : String = String::default();
-    let src : Vec<char> = contents.chars().collect();
+    let src : Vec<char> = read_file!(file_name).chars().collect();
     let siz = src.len();
     while idx < siz
     {
@@ -76,9 +114,8 @@ pub fn parse(contents:String) -> Vec<Instruction>
         }
         else 
         {
-            use std::process::exit;
-            println!("Uknown token {} at {}:{}",buff,line_num,idx-line_start-buff.len()+1);
-            exit(1);
+            println!("Unknown token {} at {}:{}:{}",buff,file_name,line_num,idx-line_start-buff.len()+1);
+            std::process::exit(1);
         }
         buff.clear();
     }

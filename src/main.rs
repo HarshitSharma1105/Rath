@@ -23,8 +23,7 @@ fn main() {
     }
     let mode = &args[1];
     let file_name = &args[2];
-    let contents = read_file!(file_name);
-    let prog = parse(contents);
+    let prog = parse(file_name);
     if mode =="compile"
     {
         compile(prog);

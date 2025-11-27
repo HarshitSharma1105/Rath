@@ -1,39 +1,7 @@
 use crate::tokenizer::*;
+use crate::{write_to_file,create_file,run_command};
 
 
-#[macro_export]
-macro_rules! write_to_file {
-    ($file:expr, $contents:expr) => {{
-        use std::io::Write;
-        let _ = $file.write_all($contents.as_bytes());
-    }};
-}
-
-
-#[macro_export]
-macro_rules! create_file{
-    ($name:expr) => {{
-        use std::fs::File;
-        File::create($name).expect("Failed to create file")
-    }};
-}
-
-
-#[macro_export]
-macro_rules! read_file {
-    ($path:expr) => {{
-        use std::fs;
-        fs::read_to_string($path).expect("Unable to open file")
-    }};
-}
-
-
-macro_rules! run_command {
-    ($command:expr) => {{
-        use std::process::Command;
-        let _ = Command::new("sh").arg("-c").arg($command).status().unwrap();
-    }};
-}
 
 
 
