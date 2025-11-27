@@ -1,4 +1,4 @@
-use crate::parser::*;
+use crate::tokenizer::*;
 pub fn interpret(program: Vec<Instruction>)
 {
     let mut stack : Vec<i64> = Vec::new();

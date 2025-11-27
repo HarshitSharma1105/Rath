@@ -1,9 +1,9 @@
 mod interpreter;
-mod parser;
+mod tokenizer;
 mod compiler;
 
 use interpreter::*;
-use parser::*;
+use tokenizer::*;
 use compiler::*;
 
 fn print_usage()
