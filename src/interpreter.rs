@@ -93,7 +93,7 @@ pub fn interpret(program: Vec<Instruction>)
                 }
                 i += 1;
             }
-            Instruction::While(_) => i += 1,
+            Instruction::While => i += 1,
             Instruction::End(val) => 
             {
                 i = val;

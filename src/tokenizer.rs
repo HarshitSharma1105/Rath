@@ -57,7 +57,7 @@ pub enum Instruction
     Greater,
     If(usize),
     Else(usize),
-    While(usize),
+    While,
     Do(usize),
     End(usize),
     Dup,
@@ -168,7 +168,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "while"
         {
             stk.push(instructions.len());
-            instructions.push(Instruction::While(0));
+            instructions.push(Instruction::While);
         }
         else if buff == "do"
         {
@@ -177,7 +177,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
                 errorf!("do without a while block",file_name,line_num,idx-line_start-buff.len()+1)
             } 
             let idx = stk.pop().unwrap();
-            if let Instruction::While(_) = instructions[idx]
+            if let Instruction::While = instructions[idx]
             {
                 stk.push(instructions.len());
                 instructions.push(Instruction::Do(idx));
@@ -199,7 +199,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             {
                 Instruction::If(val) | Instruction::Else(val) => *val = len,
                 Instruction::Do(_) => {}
-                _ =>   errorf!("Compiler only supports if and else blocks with end for now",file!(),line!(),column!())
+                _ =>   errorf!("Compiler error in if/else while",file!(),line!(),column!())
             }
             if let Instruction::Do(val) = instructions[idx]
             {

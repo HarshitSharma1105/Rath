@@ -102,8 +102,8 @@ pub fn compile(program: Vec<Instruction>)
             }
             Instruction::Greater => 
             {
-                write_to_file!(file,"    pop rax\n");
-                write_to_file!(file,"    pop rbx\n");              
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");              
                 write_to_file!(file,"    cmp rax,rbx\n");
                 write_to_file!(file,"    setg al\n");
                 write_to_file!(file,"    movzx rax,al\n");
@@ -118,20 +118,17 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    movzx rax,al\n");
                 write_to_file!(file,"    push rax\n");  
             }
-            Instruction::If(val) => 
+            Instruction::If(val) | Instruction::Do(val) => 
             {
                 write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    test rax,rax\n");
                 write_to_file!(file,format!("    jz instr_{}\n",val));
             }
-            Instruction::Else(val) => 
+            Instruction::Else(val) | Instruction::End(val) => 
             {
                 write_to_file!(file,format!("    jmp instr_{}\n",val));
             }
-            Instruction::While(_val) => 
-            {
-
-            }
+            Instruction::While => {}
             Instruction::Dup => 
             {
                 write_to_file!(file,"    push QWORD [rsp]\n");
@@ -141,7 +138,6 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    pop rdi\n");
                 write_to_file!(file,"    call print\n");
             }
-            _ => {}
         }
     }
     write_to_file!(file,format!("instr_{}:\n",program.len()));
