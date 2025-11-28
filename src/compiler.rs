@@ -124,6 +124,10 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    test rax,rax\n");
                 write_to_file!(file,format!("    jz instr_{}\n",val));
             }
+            Instruction::Else(val) => 
+            {
+                write_to_file!(file,format!("    jmp instr_{}\n",val));
+            }
             Instruction::Dump => 
             {
                 write_to_file!(file,"    mov rdi,[rsp]\n");

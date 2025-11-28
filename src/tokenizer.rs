@@ -33,6 +33,12 @@ macro_rules! run_command {
     }};
 }
 
+macro_rules! errorf{
+    ($error:expr,$file_name:expr,$row:expr,$col:expr) =>{{
+        println!("ERROR: {} at {}:{}:{}",$error,$file_name,$row,$col);
+        std::process::exit(1);
+    }};
+}
 
 
 
@@ -49,7 +55,8 @@ pub enum Instruction
     Equals,
     Less,
     Greater,
-    If(usize)
+    If(usize),
+    Else(usize)
 }
 
 
@@ -134,15 +141,39 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             stk.push(instructions.len());
             instructions.push(Instruction::If(0));
         }
+        else if buff == "else"
+        {
+            if stk.len() == 0
+            {
+                errorf!("else without a if block",file_name,line_num,idx-line_start-buff.len()+1)
+            } 
+            let idx = stk.pop().unwrap();
+            let len = instructions.len();
+            match &mut instructions[idx]
+            {
+                Instruction::If(val) => *val = len + 1,
+                _ =>   errorf!("Compiler Bug in else",file!(),line!(),column!())
+            }
+            stk.push(instructions.len());
+            instructions.push(Instruction::Else(0));
+        }
         else if buff == "end"
         {
+            if stk.len() == 0
+            {
+                errorf!("end without a if/else block",file_name,line_num,idx-line_start-buff.len()+1)
+            } 
             let idx = stk.pop().unwrap();
-            instructions[idx as usize] = Instruction::If(instructions.len());
+            let len = instructions.len();
+            match &mut instructions[idx]
+            {
+                Instruction::If(val) | Instruction::Else(val) => *val = len,
+                _ =>   errorf!("Compiler only supports if and else blocks with end for now",file!(),line!(),column!())
+            }
         }
         else 
         {
-            println!("Unknown token {} at {}:{}:{}",buff,file_name,line_num,idx-line_start-buff.len()+1);
-            std::process::exit(1);
+            errorf!(format!("Unknown token {}",buff),file_name,line_num,idx-line_start-buff.len()+1);
         }
         buff.clear();
     }

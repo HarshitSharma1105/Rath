@@ -79,6 +79,10 @@ pub fn interpret(program: Vec<Instruction>)
                 }
                 i += 1;
             }
+            Instruction::Else(val) => 
+            {
+                i = val;
+            }
             Instruction::Dump => 
             {
                 println!("{}",stack.last().unwrap());
