@@ -48,7 +48,8 @@ pub enum Instruction
     Div,
     Equals,
     Less,
-    Greater
+    Greater,
+    If(usize)
 }
 
 
@@ -61,6 +62,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
     let mut buff : String = String::default();
     let src : Vec<char> = read_file!(file_name).chars().collect();
     let siz = src.len();
+    let mut stk : Vec<usize> = Vec::default();
     while idx < siz
     {
         if src[idx].is_digit(10)
@@ -126,6 +128,16 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "<"
         {
             instructions.push(Instruction::Less);
+        }
+        else if buff == "if"
+        {
+            stk.push(instructions.len());
+            instructions.push(Instruction::If(0));
+        }
+        else if buff == "end"
+        {
+            let idx = stk.pop().unwrap();
+            instructions[idx as usize] = Instruction::If(instructions.len());
         }
         else 
         {

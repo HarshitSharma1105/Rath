@@ -56,8 +56,9 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    ret\n");
     write_to_file!(file,"main:\n");
     write_to_file!(file,"    mov rbp,rsp\n");
-    for instruction in program
+    for (idx,instruction) in program.iter().enumerate()
     {
+        write_to_file!(file,format!("instr_{}:\n",idx));
         match instruction
         {
             Instruction::Push(val) => {write_to_file!(file,format!("    push {}\n",val));}
@@ -116,6 +117,12 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    setl al\n");
                 write_to_file!(file,"    movzx rax,al\n");
                 write_to_file!(file,"    push rax\n");  
+            }
+            Instruction::If(val) => 
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    test rax,rax\n");
+                write_to_file!(file,format!("    jz instr_{}\n",val));
             }
             Instruction::Dump => 
             {
