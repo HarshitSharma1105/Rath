@@ -45,7 +45,10 @@ pub enum Instruction
     Add,
     Sub,
     Mult,
-    Div
+    Div,
+    Equals,
+    Less,
+    Greater
 }
 
 
@@ -62,7 +65,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
     {
         if src[idx].is_digit(10)
         {
-            while src[idx].is_digit(10)
+            while idx < siz && src[idx].is_digit(10)
             {
                 buff.push(src[idx]);
                 idx += 1;
@@ -111,6 +114,18 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "."
         {
             instructions.push(Instruction::Dump);
+        }
+        else if buff == "="
+        {
+            instructions.push(Instruction::Equals);
+        }
+        else if buff == ">"
+        {
+            instructions.push(Instruction::Greater);
+        }
+        else if buff == "<"
+        {
+            instructions.push(Instruction::Less);
         }
         else 
         {

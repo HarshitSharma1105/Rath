@@ -90,6 +90,33 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    div rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
+            Instruction::Equals => 
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");              
+                write_to_file!(file,"    cmp rax,rbx\n");
+                write_to_file!(file,"    sete al\n");
+                write_to_file!(file,"    movzx rax,al\n");
+                write_to_file!(file,"    push rax\n");  
+            }
+            Instruction::Greater => 
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");              
+                write_to_file!(file,"    cmp rax,rbx\n");
+                write_to_file!(file,"    setg al\n");
+                write_to_file!(file,"    movzx rax,al\n");
+                write_to_file!(file,"    push rax\n");  
+            }
+            Instruction::Less => 
+            {
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    pop rbx\n");              
+                write_to_file!(file,"    cmp rax,rbx\n");
+                write_to_file!(file,"    setl al\n");
+                write_to_file!(file,"    movzx rax,al\n");
+                write_to_file!(file,"    push rax\n");  
+            }
             Instruction::Dump => 
             {
                 write_to_file!(file,"    mov rdi,[rsp]\n");
