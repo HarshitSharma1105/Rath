@@ -2,7 +2,7 @@ use crate::tokenizer::*;
 pub fn interpret(program: Vec<Instruction>)
 {
     let mut stack : Vec<i64> = Vec::new();
-    let mut  i = 0;
+    let mut i = 0;
     while i < program.len()
     {
         let instruction = &program[i];
@@ -24,8 +24,8 @@ pub fn interpret(program: Vec<Instruction>)
             Instruction::Sub => 
             {
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
                 let b = stack.pop().unwrap();
+                let a = stack.pop().unwrap();
                 stack.push(a-b);
                 i += 1;
             }
@@ -40,32 +40,32 @@ pub fn interpret(program: Vec<Instruction>)
             Instruction::Div => 
             {
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
                 let b = stack.pop().unwrap();
+                let a = stack.pop().unwrap();
                 stack.push(a/b);
                 i += 1;
             }
             Instruction::Equals =>
             {
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
                 let b = stack.pop().unwrap();
+                let a = stack.pop().unwrap();
                 stack.push((a==b) as i64);
                 i += 1;
             }
             Instruction::Greater =>
             {
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
                 let b = stack.pop().unwrap();
+                let a = stack.pop().unwrap();
                 stack.push((a>b) as i64);
                 i += 1;
             }
             Instruction::Less =>
             {
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
                 let b = stack.pop().unwrap();
+                let a = stack.pop().unwrap();
                 stack.push((a<b) as i64);
                 i += 1;
             }
@@ -83,9 +83,31 @@ pub fn interpret(program: Vec<Instruction>)
             {
                 i = val;
             }
+            Instruction::Do(val) => 
+            {
+                let top = stack.pop().unwrap();
+                if top == 0 
+                {
+                    i = val;
+                    continue;
+                }
+                i += 1;
+            }
+            Instruction::While(_) => i += 1,
+            Instruction::End(val) => 
+            {
+                i = val;
+            }
+            Instruction::Dup => 
+            {
+                let last = stack.pop().unwrap();
+                stack.push(last);
+                stack.push(last);
+                i += 1;
+            }
             Instruction::Dump => 
             {
-                println!("{}",stack.last().unwrap());
+                println!("{}",stack.pop().unwrap());
                 i += 1;
             }
         }

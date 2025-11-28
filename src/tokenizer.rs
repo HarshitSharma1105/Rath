@@ -56,7 +56,11 @@ pub enum Instruction
     Less,
     Greater,
     If(usize),
-    Else(usize)
+    Else(usize),
+    While(usize),
+    Do(usize),
+    End(usize),
+    Dup,
 }
 
 
@@ -157,6 +161,32 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             stk.push(instructions.len());
             instructions.push(Instruction::Else(0));
         }
+        else if buff == "dup"
+        {
+            instructions.push(Instruction::Dup);
+        }
+        else if buff == "while"
+        {
+            stk.push(instructions.len());
+            instructions.push(Instruction::While(0));
+        }
+        else if buff == "do"
+        {
+            if stk.len() == 0
+            {
+                errorf!("do without a while block",file_name,line_num,idx-line_start-buff.len()+1)
+            } 
+            let idx = stk.pop().unwrap();
+            if let Instruction::While(_) = instructions[idx]
+            {
+                stk.push(instructions.len());
+                instructions.push(Instruction::Do(idx));
+            }
+            else 
+            {
+                errorf!("Compiler error in loops",file!(),line!(),column!())
+            }
+        }
         else if buff == "end"
         {
             if stk.len() == 0
@@ -168,7 +198,13 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             match &mut instructions[idx]
             {
                 Instruction::If(val) | Instruction::Else(val) => *val = len,
+                Instruction::Do(_) => {}
                 _ =>   errorf!("Compiler only supports if and else blocks with end for now",file!(),line!(),column!())
+            }
+            if let Instruction::Do(val) = instructions[idx]
+            {
+                instructions[idx] = Instruction::Do(len + 1);
+                instructions.push(Instruction::End(val));
             }
         }
         else 

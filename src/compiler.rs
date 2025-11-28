@@ -64,37 +64,37 @@ pub fn compile(program: Vec<Instruction>)
             Instruction::Push(val) => {write_to_file!(file,format!("    push {}\n",val));}
             Instruction::Add =>
             {
-                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    add rax,rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
             Instruction::Sub =>
             {
-                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    sub rax,rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
             Instruction::Mult =>
             {
-                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    imul rax,rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
             Instruction::Div =>
             {
-                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
                 write_to_file!(file,"    xor rdx,rdx\n");
                 write_to_file!(file,"    div rbx\n");
                 write_to_file!(file,"    push rax\n");
             }
             Instruction::Equals => 
             {
-                write_to_file!(file,"    pop rax\n");
-                write_to_file!(file,"    pop rbx\n");              
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");              
                 write_to_file!(file,"    cmp rax,rbx\n");
                 write_to_file!(file,"    sete al\n");
                 write_to_file!(file,"    movzx rax,al\n");
@@ -128,13 +128,23 @@ pub fn compile(program: Vec<Instruction>)
             {
                 write_to_file!(file,format!("    jmp instr_{}\n",val));
             }
+            Instruction::While(_val) => 
+            {
+
+            }
+            Instruction::Dup => 
+            {
+                write_to_file!(file,"    push QWORD [rsp]\n");
+            }
             Instruction::Dump => 
             {
-                write_to_file!(file,"    mov rdi,[rsp]\n");
+                write_to_file!(file,"    pop rdi\n");
                 write_to_file!(file,"    call print\n");
             }
+            _ => {}
         }
     }
+    write_to_file!(file,format!("instr_{}:\n",program.len()));
     write_to_file!(file,"    mov rsp,rbp\n");
     write_to_file!(file,"    xor rax,rax\n");
     write_to_file!(file,"    ret\n");

@@ -1,0 +1,5 @@
+20
+while dup 0 > do 
+    dup .
+    1 -
+end
