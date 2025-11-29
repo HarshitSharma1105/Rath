@@ -1,0 +1,6 @@
+mem 
+dup dump
+dup 0 + 20 .
+dup 1 + 30 .
+dup 2 + 40 .
+dup 1 + ,  dump

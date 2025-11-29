@@ -1,6 +1,6 @@
 45 45 +
 91 >
-if 20 30 * . 
-else 80 40 / .
+if 20 30 * dump 
+else 80 40 / dump
 end
-37 71 * .
+37 71 * dump

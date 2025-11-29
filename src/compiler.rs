@@ -118,6 +118,18 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    movzx rax,al\n");
                 write_to_file!(file,"    push rax\n");  
             }
+            Instruction::Mem =>
+            {
+                write_to_file!(file,"    push mem\n");
+            }
+            Instruction::Store => 
+            {
+
+            }
+            Instruction::Load => 
+            {
+                
+            }
             Instruction::If(val) | Instruction::Do(val) => 
             {
                 write_to_file!(file,"    pop rax\n");
@@ -144,8 +156,10 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    mov rsp,rbp\n");
     write_to_file!(file,"    xor rax,rax\n");
     write_to_file!(file,"    ret\n");
+    write_to_file!(file,"section \".bss\"\n");
+    write_to_file!(file,"    mem: rb 64000\n");
     run_command!("fasm output.asm");
-    run_command!("cc output.o -o output");
+    run_command!("cc -no-pie output.o -o output");
     run_command!("./output");
     run_command!("rm output.o output.asm");
 }

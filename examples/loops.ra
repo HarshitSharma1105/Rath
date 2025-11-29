@@ -7,3 +7,4 @@ while dup do
     dup .
     1 -
 end
+mem .
