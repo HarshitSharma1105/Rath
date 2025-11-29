@@ -1,5 +1,9 @@
 20
-while dup 0 > do 
+while dup do 
+    dup 10 / 0 > 
+    if 300 .
+    else 200 .
+    end
     dup .
     1 -
 end

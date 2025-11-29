@@ -149,13 +149,15 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         {
             if stk.len() == 0
             {
-                errorf!("else without a if block",file_name,line_num,idx-line_start-buff.len()+1)
+                errorf!("else without a if block",file_name,line_num,idx-line_start-buff.len()+1);
             } 
-            let idx = stk.pop().unwrap();
+            let index = stk.pop().unwrap();
             let len = instructions.len();
-            match &mut instructions[idx]
+            match &mut instructions[index]
             {
                 Instruction::If(val) => *val = len + 1,
+                Instruction::Else(_) | Instruction::Do(_) | Instruction::While => 
+                errorf!("missing if block for else",file_name,line_num,idx-line_start-buff.len()+1),
                 _ =>   errorf!("Compiler Bug in else",file!(),line!(),column!())
             }
             stk.push(instructions.len());
@@ -172,39 +174,42 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         }
         else if buff == "do"
         {
-            if stk.len() == 0
+            if stk.len() == 0 
             {
-                errorf!("do without a while block",file_name,line_num,idx-line_start-buff.len()+1)
+                errorf!("do without a while block",file_name,line_num,idx-line_start-buff.len()+1);
             } 
-            let idx = stk.pop().unwrap();
-            if let Instruction::While = instructions[idx]
+            let index = stk.pop().unwrap();
+            if let Instruction::While = instructions[index]
             {
                 stk.push(instructions.len());
-                instructions.push(Instruction::Do(idx));
+                instructions.push(Instruction::Do(index));
+            }
+            else if let Instruction:: If(_) | Instruction::Else(_) = instructions[index]
+            {
+                errorf!("do without a while block",file_name,line_num,idx-line_start-buff.len()+1);
             }
             else 
             {
-                errorf!("Compiler error in loops",file!(),line!(),column!())
+                errorf!("Compiler error in loops",file!(),line!(),column!());
             }
         }
         else if buff == "end"
         {
             if stk.len() == 0
             {
-                errorf!("end without a if/else block",file_name,line_num,idx-line_start-buff.len()+1)
+                errorf!("end without a if/else block",file_name,line_num,idx-line_start-buff.len()+1);
             } 
-            let idx = stk.pop().unwrap();
+            let index = stk.pop().unwrap();
             let len = instructions.len();
-            match &mut instructions[idx]
+            match instructions[index]
             {
-                Instruction::If(val) | Instruction::Else(val) => *val = len,
-                Instruction::Do(_) => {}
+                Instruction::If(ref mut val) | Instruction::Else(ref mut val) => *val = len,
+                Instruction::Do(val) => {
+                    instructions.push(Instruction::End(val));
+                    instructions[index] = Instruction::Do(instructions.len());
+                }
+                Instruction::While => errorf!("While Block without Do keyword",file_name,line_num,idx-line_start-buff.len()+1),
                 _ =>   errorf!("Compiler error in if/else while",file!(),line!(),column!())
-            }
-            if let Instruction::Do(val) = instructions[idx]
-            {
-                instructions[idx] = Instruction::Do(len + 1);
-                instructions.push(Instruction::End(val));
             }
         }
         else 
@@ -212,6 +217,10 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             errorf!(format!("Unknown token {}",buff),file_name,line_num,idx-line_start-buff.len()+1);
         }
         buff.clear();
+    }
+    if stk.len() != 0
+    {
+        errorf!("Expected end to close off if/else/while blocks",file_name,line_num,idx-line_start-buff.len()+1);
     }
     instructions
 }
