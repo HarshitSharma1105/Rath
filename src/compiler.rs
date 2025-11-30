@@ -10,7 +10,6 @@ pub fn compile(program: Vec<Instruction>)
     let mut file = create_file!("output.asm");
     write_to_file!(file,"format ELF64\n");
     write_to_file!(file,"section \".text\" executable\n");
-    write_to_file!(file,"public main\n");
     write_to_file!(file,"print:\n");
     write_to_file!(file,"    sub     rsp, 264\n");
     write_to_file!(file,"    mov     ecx, 2\n");
@@ -54,7 +53,8 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    syscall\n");
     write_to_file!(file,"    add     rsp, 264\n");
     write_to_file!(file,"    ret\n");
-    write_to_file!(file,"main:\n");
+    write_to_file!(file,"public _start\n");
+    write_to_file!(file,"_start:\n");
     write_to_file!(file,"    mov rbp,rsp\n");
     for (idx,instruction) in program.iter().enumerate()
     {
@@ -124,11 +124,16 @@ pub fn compile(program: Vec<Instruction>)
             }
             Instruction::Store => 
             {
-
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    mov [rax],bl\n");
             }
             Instruction::Load => 
             {
-                
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    xor rbx,rbx\n");
+                write_to_file!(file,"    mov bl,[rax]\n");
+                write_to_file!(file,"    push rbx\n");
             }
             Instruction::If(val) | Instruction::Do(val) => 
             {
@@ -155,11 +160,14 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,format!("instr_{}:\n",program.len()));
     write_to_file!(file,"    mov rsp,rbp\n");
     write_to_file!(file,"    xor rax,rax\n");
-    write_to_file!(file,"    ret\n");
+    write_to_file!(file,"    mov rax,60\n");
+    write_to_file!(file,"    mov rdi,0\n");
+    write_to_file!(file,"    syscall\n");
     write_to_file!(file,"section \".bss\"\n");
     write_to_file!(file,"    mem: rb 64000\n");
     run_command!("fasm output.asm");
-    run_command!("cc -no-pie output.o -o output");
-    run_command!("./output");
+    run_command!("mkdir -p builds");
+    run_command!("ld output.o -o builds/output");
+    run_command!("builds/output");
     run_command!("rm output.o output.asm");
 }

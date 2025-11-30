@@ -3,11 +3,10 @@ pub fn interpret(program: Vec<Instruction>)
 {
     let mut stack : Vec<i64> = Vec::new();
     let mut i = 0;
-    let mut memory : [i64;200] = [0;200];
+    let mut memory : [u8;200] = [0;200];
     while i < program.len()
     {
-        let instruction = &program[i];
-        match *instruction
+        match program[i]
         {
             Instruction::Push(val) => 
             {
@@ -121,14 +120,14 @@ pub fn interpret(program: Vec<Instruction>)
                 assert!(stack.len() > 1);
                 let val = stack.pop().unwrap();
                 let index = stack.pop().unwrap();
-                memory[index as usize] = val;
+                memory[index as usize] = (val & 0xFF) as u8;
                 i += 1;
             }
             Instruction::Load =>
             {
                 assert!(stack.len() > 0);
                 let index = stack.pop().unwrap() as usize;
-                stack.push(memory[index]);
+                stack.push(memory[index] as i64);
                 i += 1;
             }
         }

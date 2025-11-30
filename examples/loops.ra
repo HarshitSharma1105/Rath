@@ -1,10 +1,10 @@
 20
 while dup do 
     dup 10 / 0 > 
-    if 300 .
-    else 200 .
+    if 300 dump
+    else 200 dump
     end
-    dup .
+    dup dump
     1 -
 end
 mem .
