@@ -1,0 +1,8 @@
+mem
+dup 0 + 97 .
+dup 1 + 99 .
+dup 2 + 107 .
+dup 3 + 10 .
+1 1 mem 4 syscall3
+60 69 syscall1
+

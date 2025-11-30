@@ -5,9 +5,10 @@ use crate::{write_to_file,create_file,run_command};
 
 
 
-pub fn compile(program: Vec<Instruction>)
+pub fn compile(program: Vec<Instruction>,run: bool)
 {
-    let mut file = create_file!("output.asm");
+    run_command!("mkdir -p builds");
+    let mut file = create_file!("builds/output.asm");
     write_to_file!(file,"format ELF64\n");
     write_to_file!(file,"section \".text\" executable\n");
     write_to_file!(file,"print:\n");
@@ -155,6 +156,20 @@ pub fn compile(program: Vec<Instruction>)
                 write_to_file!(file,"    pop rdi\n");
                 write_to_file!(file,"    call print\n");
             }
+            Instruction::Syscall1 =>
+            {
+                write_to_file!(file,"    pop rdi\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    syscall\n");
+            }
+            Instruction::Syscall3 => 
+            {
+                write_to_file!(file,"    pop rdx\n");
+                write_to_file!(file,"    pop rsi\n");
+                write_to_file!(file,"    pop rdi\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    syscall\n");
+            }
         }
     }
     write_to_file!(file,format!("instr_{}:\n",program.len()));
@@ -165,9 +180,10 @@ pub fn compile(program: Vec<Instruction>)
     write_to_file!(file,"    syscall\n");
     write_to_file!(file,"section \".bss\"\n");
     write_to_file!(file,"    mem: rb 64000\n");
-    run_command!("fasm output.asm");
-    run_command!("mkdir -p builds");
-    run_command!("ld output.o -o builds/output");
-    run_command!("builds/output");
-    run_command!("rm output.o output.asm");
+    run_command!("fasm builds/output.asm");
+    run_command!("ld builds/output.o -o builds/output");
+    if run 
+    {
+        run_command!("builds/output");
+    }
 }

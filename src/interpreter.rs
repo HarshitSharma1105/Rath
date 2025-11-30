@@ -15,6 +15,7 @@ pub fn interpret(program: Vec<Instruction>)
             }
             Instruction::Add => 
             {
+                // TODO : Make this an error not an assert using errorf
                 assert!(stack.len() > 1);
                 let a = stack.pop().unwrap();
                 let b = stack.pop().unwrap();
@@ -128,6 +129,52 @@ pub fn interpret(program: Vec<Instruction>)
                 assert!(stack.len() > 0);
                 let index = stack.pop().unwrap() as usize;
                 stack.push(memory[index] as i64);
+                i += 1;
+            }
+            Instruction::Syscall1 => 
+            {
+                assert!(stack.len() > 1);
+                let syscall_arg1 = stack.pop().unwrap();
+                let syscall_num  = stack.pop().unwrap();
+                if syscall_num == 60
+                {
+                    std::process::exit(syscall_arg1 as i32);
+                }
+                else 
+                {
+                    assert!(false, "Implement more syscalls\n");
+                }
+                i += 1;
+            }
+            Instruction::Syscall3 => 
+            {
+                assert!(stack.len() > 3);
+                let syscall_arg3 = stack.pop().unwrap();
+                let syscall_arg2 = stack.pop().unwrap();
+                let syscall_arg1 = stack.pop().unwrap();
+                let syscall_num  = stack.pop().unwrap();
+                if syscall_num == 1
+                {
+                    for i in syscall_arg2..syscall_arg2+syscall_arg3
+                    {
+                        if syscall_arg1 == 1
+                        {
+                            print!("{}",memory[i as usize] as char);
+                        }
+                        else if syscall_arg1 == 2
+                        {
+                            eprint!("{}",memory[i as usize] as char);
+                        }
+                        else
+                        {
+                            assert!(false, "invalid fd for simulation\n");
+                        }
+                    }
+                }
+                else 
+                {
+                    assert!(false, "Implement more syscalls\n");
+                }
                 i += 1;
             }
         }

@@ -63,7 +63,9 @@ pub enum Instruction
     Dup,
     Mem,
     Store,
-    Load
+    Load,
+    Syscall1,
+    Syscall3
 }
 
 
@@ -226,6 +228,14 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
                 Instruction::While => errorf!("While Block without Do keyword",file_name,line_num,idx-line_start-buff.len()+1),
                 _ =>   errorf!("Compiler error in if/else while",file!(),line!(),column!())
             }
+        }
+        else if buff == "syscall1"
+        {
+            instructions.push(Instruction::Syscall1);
+        }
+        else if buff == "syscall3"
+        {
+            instructions.push(Instruction::Syscall3);
         }
         else 
         {
