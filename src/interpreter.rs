@@ -1,9 +1,10 @@
 use crate::tokenizer::*;
+use crate::pop;
 pub fn interpret(program: Vec<Instruction>)
 {
     let mut stack : Vec<i64> = Vec::new();
     let mut i = 0;
-    let mut memory : [u8;200] = [0;200];
+    let mut memory : [char;200] = ['\0';200];
     while i < program.len()
     {
         match program[i]
@@ -17,62 +18,62 @@ pub fn interpret(program: Vec<Instruction>)
             {
                 // TODO : Make this an error not an assert using errorf
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
-                let b = stack.pop().unwrap();
+                let a = pop!(stack);
+                let b = pop!(stack);
                 stack.push(a+b);
                 i += 1;
             }
             Instruction::Sub => 
             {
                 assert!(stack.len() > 1);
-                let b = stack.pop().unwrap();
-                let a = stack.pop().unwrap();
+                let b = pop!(stack);
+                let a = pop!(stack);
                 stack.push(a-b);
                 i += 1;
             }
             Instruction::Mult => 
             {
                 assert!(stack.len() > 1);
-                let a = stack.pop().unwrap();
-                let b = stack.pop().unwrap();
+                let a = pop!(stack);
+                let b = pop!(stack);
                 stack.push(a*b);
                 i += 1;
             }
             Instruction::Div => 
             {
                 assert!(stack.len() > 1);
-                let b = stack.pop().unwrap();
-                let a = stack.pop().unwrap();
+                let b = pop!(stack);
+                let a = pop!(stack);
                 stack.push(a/b);
                 i += 1;
             }
             Instruction::Equals =>
             {
                 assert!(stack.len() > 1);
-                let b = stack.pop().unwrap();
-                let a = stack.pop().unwrap();
+                let b = pop!(stack);
+                let a = pop!(stack);
                 stack.push((a==b) as i64);
                 i += 1;
             }
             Instruction::Greater =>
             {
                 assert!(stack.len() > 1);
-                let b = stack.pop().unwrap();
-                let a = stack.pop().unwrap();
+                let b = pop!(stack);
+                let a = pop!(stack);
                 stack.push((a>b) as i64);
                 i += 1;
             }
             Instruction::Less =>
             {
                 assert!(stack.len() > 1);
-                let b = stack.pop().unwrap();
-                let a = stack.pop().unwrap();
+                let b = pop!(stack);
+                let a = pop!(stack);
                 stack.push((a<b) as i64);
                 i += 1;
             }
             Instruction::If(val) =>
             {
-                let top = stack.pop().unwrap();
+                let top = pop!(stack);
                 if top == 0 
                 {
                     i = val;
@@ -86,7 +87,7 @@ pub fn interpret(program: Vec<Instruction>)
             }
             Instruction::Do(val) => 
             {
-                let top = stack.pop().unwrap();
+                let top = pop!(stack);
                 if top == 0 
                 {
                     i = val;
@@ -101,14 +102,14 @@ pub fn interpret(program: Vec<Instruction>)
             }
             Instruction::Dup => 
             {
-                let last = stack.pop().unwrap();
+                let last = pop!(stack);
                 stack.push(last);
                 stack.push(last);
                 i += 1;
             }
             Instruction::Dump => 
             {
-                println!("{}",stack.pop().unwrap());
+                println!("{}",pop!(stack));
                 i += 1;
             }
             Instruction::Mem => 
@@ -119,23 +120,23 @@ pub fn interpret(program: Vec<Instruction>)
             Instruction::Store => 
             {
                 assert!(stack.len() > 1);
-                let val = stack.pop().unwrap();
-                let index = stack.pop().unwrap();
-                memory[index as usize] = (val & 0xFF) as u8;
+                let val = pop!(stack);
+                let index = pop!(stack);
+                memory[index as usize] = (val & 0xFF) as u8 as char;
                 i += 1;
             }
             Instruction::Load =>
             {
                 assert!(stack.len() > 0);
-                let index = stack.pop().unwrap() as usize;
+                let index = pop!(stack) as usize;
                 stack.push(memory[index] as i64);
                 i += 1;
             }
             Instruction::Syscall1 => 
             {
                 assert!(stack.len() > 1);
-                let syscall_arg1 = stack.pop().unwrap();
-                let syscall_num  = stack.pop().unwrap();
+                let syscall_arg1 = pop!(stack);
+                let syscall_num  = pop!(stack);
                 if syscall_num == 60
                 {
                     std::process::exit(syscall_arg1 as i32);
@@ -149,21 +150,21 @@ pub fn interpret(program: Vec<Instruction>)
             Instruction::Syscall3 => 
             {
                 assert!(stack.len() > 3);
-                let syscall_arg3 = stack.pop().unwrap();
-                let syscall_arg2 = stack.pop().unwrap();
-                let syscall_arg1 = stack.pop().unwrap();
-                let syscall_num  = stack.pop().unwrap();
+                let syscall_arg3 = pop!(stack);
+                let syscall_arg2 = pop!(stack);
+                let syscall_arg1 = pop!(stack);
+                let syscall_num  = pop!(stack);
                 if syscall_num == 1
                 {
                     for i in syscall_arg2..syscall_arg2+syscall_arg3
                     {
                         if syscall_arg1 == 1
                         {
-                            print!("{}",memory[i as usize] as char);
+                            print!("{}",memory[i as usize]);
                         }
                         else if syscall_arg1 == 2
                         {
-                            eprint!("{}",memory[i as usize] as char);
+                            eprint!("{}",memory[i as usize]);
                         }
                         else
                         {

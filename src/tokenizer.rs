@@ -32,7 +32,7 @@ macro_rules! run_command {
         let _ = Command::new("sh").arg("-c").arg($command).status().unwrap();
     }};
 }
-
+#[macro_export]
 macro_rules! errorf{
     ($error:expr,$file_name:expr,$row:expr,$col:expr) =>{{
         println!("ERROR: {} at {}:{}:{}",$error,$file_name,$row,$col);
@@ -40,8 +40,12 @@ macro_rules! errorf{
     }};
 }
 
-
-
+#[macro_export]
+macro_rules! pop{
+    ($vec:expr) => {{
+        $vec.pop().unwrap()
+    }};
+}
 
 #[derive(Debug)]
 pub enum Instruction
@@ -149,6 +153,13 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         {
             instructions.push(Instruction::Less);
         }
+        else if buff == "//"
+        {
+            while idx < siz && src[idx] != '\n'
+            {
+                idx += 1;
+            }   
+        }
         else if buff == "dump"
         {
             instructions.push(Instruction::Dump);
@@ -168,7 +179,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             {
                 errorf!("else without a if block",file_name,line_num,idx-line_start-buff.len()+1);
             } 
-            let index = stk.pop().unwrap();
+            let index = pop!(stk);
             let len = instructions.len();
             match &mut instructions[index]
             {
@@ -195,7 +206,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             {
                 errorf!("do without a while block",file_name,line_num,idx-line_start-buff.len()+1);
             } 
-            let index = stk.pop().unwrap();
+            let index = pop!(stk);
             if let Instruction::While = instructions[index]
             {
                 stk.push(instructions.len());
@@ -216,7 +227,7 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
             {
                 errorf!("end without a if/else block",file_name,line_num,idx-line_start-buff.len()+1);
             } 
-            let index = stk.pop().unwrap();
+            let index = pop!(stk);
             let len = instructions.len();
             match instructions[index]
             {
