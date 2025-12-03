@@ -3,7 +3,9 @@
 macro_rules! write_to_file {
     ($file:expr, $contents:expr) => {{
         use std::io::Write;
-        let _ = $file.write_all($contents.as_bytes());
+        let mut line = $contents.to_string();
+        line.push('\n');
+        let _ = $file.write_all(line.as_bytes());
     }};
 }
 
@@ -29,7 +31,7 @@ macro_rules! read_file {
 macro_rules! run_command {
     ($command:expr) => {{
         use std::process::Command;
-        let _ = Command::new("sh").arg("-c").arg($command).status().unwrap();
+        Command::new("sh").arg("-c").arg($command).status().unwrap()
     }};
 }
 #[macro_export]
