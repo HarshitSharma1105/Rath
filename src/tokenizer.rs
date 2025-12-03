@@ -3,9 +3,7 @@
 macro_rules! write_to_file {
     ($file:expr, $contents:expr) => {{
         use std::io::Write;
-        let mut line = $contents.to_string();
-        line.push('\n');
-        let _ = $file.write_all(line.as_bytes());
+        let _ = $file.write_all(format!("{}\n",$contents).as_bytes());
     }};
 }
 
@@ -67,6 +65,8 @@ pub enum Instruction
     Do(usize),
     End(usize),
     Dup,
+    Dup2,
+    Swap,
     Drop,
     Mem,
     Store,
@@ -221,6 +221,14 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "dup"
         {
             instructions.push(Instruction::Dup);
+        }
+        else if buff == "dup2"
+        {
+            instructions.push(Instruction::Dup2);
+        }
+        else if buff == "swap"
+        {
+            instructions.push(Instruction::Swap);
         }
         else if buff == "while"
         {

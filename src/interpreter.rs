@@ -139,9 +139,26 @@ pub fn interpret(program: Vec<Instruction>)
                 stack.push(last);
                 i += 1;
             }
+            Instruction::Dup2 => 
+            {
+                let last = pop!(stack);
+                let sec_last = pop!(stack);
+                stack.push(sec_last);
+                stack.push(last);
+                i += 1;
+            }
             Instruction::Drop => 
             {
                 pop!(stack);
+                i += 1;
+            }
+            Instruction::Swap => 
+            {
+                assert!(stack.len() > 1);
+                let a = pop!(stack);
+                let b = pop!(stack);
+                stack.push(a);
+                stack.push(b);
                 i += 1;
             }
             Instruction::Dump => 

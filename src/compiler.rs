@@ -167,7 +167,23 @@ pub fn compile(program: Vec<Instruction>,run: bool)
             Instruction::While => {}
             Instruction::Dup => 
             {
-                write_to_file!(file,"    push QWORD [rsp]");
+                write_to_file!(file,"    pop rax");
+                write_to_file!(file,"    push rax");
+                write_to_file!(file,"    push rax");
+            }
+            Instruction::Dup2 => 
+            {
+                write_to_file!(file,"    pop rax");
+                write_to_file!(file,"    pop rbx");
+                write_to_file!(file,"    push rbx");
+                write_to_file!(file,"    push rax");
+            }
+            Instruction::Swap => 
+            {
+                write_to_file!(file,"    pop rax");
+                write_to_file!(file,"    pop rbx");
+                write_to_file!(file,"    push rax");
+                write_to_file!(file,"    push rbx");
             }
             Instruction::Dump => 
             {
