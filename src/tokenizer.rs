@@ -66,6 +66,7 @@ pub enum Instruction
     End(usize),
     Dup,
     Dup2,
+    Over,
     Swap,
     Drop,
     Mem,
@@ -229,6 +230,10 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "swap"
         {
             instructions.push(Instruction::Swap);
+        }
+        else if buff == "over"
+        {
+            instructions.push(Instruction::Over);
         }
         else if buff == "while"
         {

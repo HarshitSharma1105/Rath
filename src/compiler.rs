@@ -178,6 +178,14 @@ pub fn compile(program: Vec<Instruction>,run: bool)
                 write_to_file!(file,"    push rbx");
                 write_to_file!(file,"    push rax");
             }
+            Instruction::Over => 
+            {
+                write_to_file!(file,"    pop rax");
+                write_to_file!(file,"    pop rbx");
+                write_to_file!(file,"    push rbx");
+                write_to_file!(file,"    push rax");
+                write_to_file!(file,"    push rbx");
+            }
             Instruction::Swap => 
             {
                 write_to_file!(file,"    pop rax");

@@ -161,6 +161,16 @@ pub fn interpret(program: Vec<Instruction>)
                 stack.push(b);
                 i += 1;
             }
+            Instruction::Over => 
+            {
+                assert!(stack.len() > 1);
+                let a = pop!(stack);
+                let b = pop!(stack);
+                stack.push(b);
+                stack.push(a);
+                stack.push(b);
+                i += 1;
+            }
             Instruction::Dump => 
             {
                 println!("{}",pop!(stack));
