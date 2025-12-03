@@ -113,6 +113,34 @@ pub fn compile(program: Vec<Instruction>,run: bool)
             {
                 write_to_file!(file,"    push mem\n");
             }
+            Instruction::ShiftLeft => 
+            {
+                write_to_file!(file,"    pop rcx\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    shl rax,cl\n");
+                write_to_file!(file,"    push rax\n");
+            }
+            Instruction::ShiftRight => 
+            {
+                write_to_file!(file,"    pop rcx\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    shr rax,cl\n");
+                write_to_file!(file,"    push rax\n");
+            }
+            Instruction::BitAnd => 
+            {
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    and rax,rbx\n");
+                write_to_file!(file,"    push rax\n");
+            }
+            Instruction::BitOr => 
+            {
+                write_to_file!(file,"    pop rbx\n");
+                write_to_file!(file,"    pop rax\n");
+                write_to_file!(file,"    or  rax,rbx\n");
+                write_to_file!(file,"    push rax\n");
+            }
             Instruction::Store => 
             {
                 write_to_file!(file,"    pop rbx\n");

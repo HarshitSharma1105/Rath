@@ -71,6 +71,38 @@ pub fn interpret(program: Vec<Instruction>)
                 stack.push((a<b) as i64);
                 i += 1;
             }
+            Instruction::BitAnd => 
+            {
+                assert!(stack.len() > 1);
+                let b = pop!(stack);
+                let a = pop!(stack);
+                stack.push(a & b);
+                i += 1;
+            }
+            Instruction::BitOr =>  
+            {
+                assert!(stack.len() > 1);
+                let b = pop!(stack);
+                let a = pop!(stack);
+                stack.push(a | b);
+                i += 1;
+            }
+            Instruction::ShiftLeft =>  
+            {
+                assert!(stack.len() > 1);
+                let b = pop!(stack);
+                let a = pop!(stack);
+                stack.push(a << b);
+                i += 1;
+            }
+            Instruction::ShiftRight =>
+            {
+                assert!(stack.len() > 1);
+                let b = pop!(stack);
+                let a = pop!(stack);
+                stack.push(a >> b);
+                i += 1;
+            }
             Instruction::If(val) =>
             {
                 let top = pop!(stack);

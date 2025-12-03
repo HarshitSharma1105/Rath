@@ -69,7 +69,11 @@ pub enum Instruction
     Store,
     Load,
     Syscall1,
-    Syscall3
+    Syscall3,
+    BitOr,
+    BitAnd,
+    ShiftLeft,
+    ShiftRight
 }
 
 
@@ -167,6 +171,22 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "mem"
         {
             instructions.push(Instruction::Mem);
+        }
+        else if buff == ">>"
+        {
+            instructions.push(Instruction::ShiftRight);
+        }
+        else if buff == "<<"
+        {
+            instructions.push(Instruction::ShiftLeft);
+        }
+        else if buff == "&" 
+        {
+            instructions.push(Instruction::BitAnd);
+        }
+        else if buff == "|" 
+        {
+            instructions.push(Instruction::BitOr);
         }
         else if buff == "if"
         {

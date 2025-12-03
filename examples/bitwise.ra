@@ -1,0 +1,4 @@
+1 3 << dump
+1024 9 >> dump
+1 4 | dump
+1 5 & dump

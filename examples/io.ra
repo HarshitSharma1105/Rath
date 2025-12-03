@@ -1,3 +1,3 @@
 0 0 mem 10 syscall3 // read from stdin
 1 0 mem 10 syscall3 // write to stdin
-1 1 mem 20 syscall3 // write to stdout
+1 1 mem 10 syscall3 // write to stdout

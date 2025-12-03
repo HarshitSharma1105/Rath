@@ -9,7 +9,7 @@ use compiler::*;
 fn print_usage()
 {
     use std::process::exit;
-    print!("Expected arguments <compile/interpret> <file name> run\n");
+    print!("Expected arguments <file name> <compile/interpret>  run\n");
     exit(1);
 }
 
@@ -21,10 +21,10 @@ fn main() {
     {
         print_usage();
     }
-    let mode = &args[1];
-    let file_name = &args[2];
+    let mode = &args[2];
+    let file_name = &args[1];
     let prog = parse(file_name);
-    if mode =="compile"
+    if mode == "compile"
     {
         let mut run : bool = false;
         if args.len() > 3
