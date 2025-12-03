@@ -65,6 +65,7 @@ pub enum Instruction
     Do(usize),
     End(usize),
     Dup,
+    Drop,
     Mem,
     Store,
     Load,
@@ -167,6 +168,10 @@ pub fn parse(file_name: &String) -> Vec<Instruction>
         else if buff == "dump"
         {
             instructions.push(Instruction::Dump);
+        }
+        else if buff == "drop"
+        {
+            instructions.push(Instruction::Drop);
         }
         else if buff == "mem"
         {

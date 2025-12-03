@@ -139,6 +139,11 @@ pub fn interpret(program: Vec<Instruction>)
                 stack.push(last);
                 i += 1;
             }
+            Instruction::Drop => 
+            {
+                pop!(stack);
+                i += 1;
+            }
             Instruction::Dump => 
             {
                 println!("{}",pop!(stack));

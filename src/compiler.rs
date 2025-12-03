@@ -174,6 +174,10 @@ pub fn compile(program: Vec<Instruction>,run: bool)
                 write_to_file!(file,"    pop rdi\n");
                 write_to_file!(file,"    call print\n");
             }
+            Instruction::Drop =>
+            {
+                write_to_file!(file,"    pop rax\n");
+            }
             Instruction::Syscall1 =>
             {
                 write_to_file!(file,"    pop rdi\n");
